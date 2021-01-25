@@ -1,7 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApiUserDataAccessService, User } from '@stack-v490/api/user/data-access'
-import { CtxUser, GqlAuthAdminGuard } from '@stack-v490/api/auth/util'
+import { GqlAuthAdminGuard } from '@stack-v490/api/auth/util'
 
 @Resolver()
 @UseGuards(GqlAuthAdminGuard)

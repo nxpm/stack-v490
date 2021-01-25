@@ -1,9 +1,26 @@
-import { ApiAuthFeatureModule } from '@stack-v490/api/auth/feature'
+import { Logger, Module } from '@nestjs/common'
+import { ServeStaticModule } from '@nestjs/serve-static'
 import { ApiCoreFeatureModule } from '@stack-v490/api/core/feature'
-import { ApiUserFeatureModule } from '@stack-v490/api/user/feature'
-import { Module } from '@nestjs/common'
+import { ensureDirSync, existsSync, writeFileSync } from 'fs-extra'
+import { join } from 'path'
+
+const rootPath = join(__dirname, '..', 'web')
 
 @Module({
-  imports: [ApiAuthFeatureModule, ApiCoreFeatureModule, ApiUserFeatureModule],
+  imports: [
+    ApiCoreFeatureModule,
+    ServeStaticModule.forRoot({
+      rootPath,
+      exclude: ['/api/*', '/graphql'],
+    }),
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    if (!existsSync(rootPath)) {
+      ensureDirSync(rootPath)
+      writeFileSync(join(rootPath, 'index.html'), `<pre>OK</pre>`)
+      Logger.verbose(`Created static root path ${rootPath}`)
+    }
+  }
+}
